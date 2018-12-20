@@ -23,16 +23,17 @@
             Room:<input type="text" name="roomid"/>
         </div>
         <div class="header">
-            From:<input type="text" name="from"/>
-            To:<input type="text" name="to"/>
+            From:<input type="text" name="from" size="5"/>
+            To:<input type="text" name="to" size="5"/>
         </div>
-        <div class="content">
-        </div>
-        <div class="error"></div>
         <div class="sendbox">
             <input type="text" name="msg" />
             <button class="sendbtn">Send</button>
         </div>
+        <div class="content">
+        </div>
+        <div class="error"></div>
+
     </div>
 </body>
 <script>
