@@ -9,7 +9,7 @@
 <style>
     .box{width:90%;height:600px;margin:0 auto;border:1px solid #ccc;border-radius:5px;padding:4px;}
     .header{margin-left:20px;}
-    .content{height:500px;width:80%;border:1px solid #f00;overflow-y:auto;margin-left:20px;}
+    .content{height:300px;width:80%;border:1px solid #f00;overflow-y:scroll;margin-left:20px;}
     .sendbox{margin-left:20px;}
     .error{color:#f00;}
     .blue{color:#00f;font-weight:bold;}
@@ -61,10 +61,10 @@
                                 obj = data.msg[i];
                                 if(obj.from == from){
                                     msgHtml += '<div class="from"><span class="blue">'+data.msg[i].from+':</span>'
-                                        + data.msg[i].msg + '</div>';
+                                        + uncompile(data.msg[i].msg,obj.key) + '</div>';
                                 }else{
                                     msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
-                                        + data.msg[i].msg + '</div>';
+                                        + uncompile(data.msg[i].msg,obj.key) + '</div>';
                                 }
                             }
                             $('.content').append(msgHtml);
@@ -96,7 +96,7 @@
                             var msgHtml = '';
                             for(var i in data.msg){
                                 msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
-                                    + data.msg[i].msg + '</div>';
+                                    + uncompile(data.msg[i].msg,data.msg[i].key) + '</div>';
                             }
                             $('.content').append(msgHtml);
                         }
@@ -116,16 +116,18 @@
             if((sendTo == '') || (from == '') || (roomId == '') || (msg == '')){
                 return;
             }
+
+		var key = parseInt(Math.random()* 10000);
             $.ajax({
                 url:'ca.php',
                 type:'post',
                 dataType:"json",
-                data:{'to':sendTo,'msg':msg,'from':from,'roomId':roomId},
+                data:{'to':sendTo,'msg':compile(msg,key),'from':from,'roomId':roomId,'key':key},
                 success:function(data){
                     if(data.status == 0){
                         $('input[name=msg]').val('');
                         var msgHtml = '<div class="from"><span class="blue">'+data.from+':</span>'
-                        + data.msg + '</div>';
+                        + uncompile(data.msg,data.key) + '</div>';
                         $('.content').append(msgHtml);
                     }else{
                         $('.error').html('发送失败了，请重发;');
@@ -134,5 +136,22 @@
             })
         });
     });
+		function compile(code,key) {
+			var c=code.charCodeAt(0)+key;
+			for(var i=1;i<code.length;i++){
+				c+='|'+(code.charCodeAt(i)+code.charCodeAt(i-1) + key);
+			}
+			return c;
+		}
+		function uncompile(code,key) {
+			var codeArr = code.split('|');
+			var c=String.fromCharCode(codeArr[0]-key);
+			var lastCode = codeArr[0]-key;
+			for(var i=1;i<codeArr.length;i++){
+				c+=String.fromCharCode(codeArr[i]-lastCode - key);
+				lastCode = codeArr[i]-lastCode - key;
+			}
+			return c;
+		}
 </script>
 </html>
