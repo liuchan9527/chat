@@ -30,6 +30,10 @@
             <input type="text" name="msg" />
             <button class="sendbtn">Send</button>
         </div>
+        <div class="filebox">
+            <input type="file" name="file" />
+            <button class="uploadbtn">Upload</button>
+        </div>
         <div class="content">
         </div>
         <div class="error"></div>
