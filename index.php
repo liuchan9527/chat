@@ -31,7 +31,7 @@
             <button class="sendbtn">Send</button>
         </div>
         <div class="filebox">
-            <input type="file" name="file" />
+            <input type="file" name="file" id="file"/>
             <button class="uploadbtn">Upload</button>
         </div>
         <div class="content">
@@ -139,6 +139,31 @@
                 }
             })
         });
+	$('.uploadbtn').click(function(){
+var formData = new FormData();
+formData.append('file', $('#file')[0].files[0]);
+$.ajax({
+    url: './upload.php',
+    type: 'POST',
+    cache: false,
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType:'json'
+}).done(function(res) {
+	if(res.status==1){
+		$('.content').append('<div><span style="color:#0f0">文件上传成功</span></div>');
+		if(res.pic == 1){
+			$('.content').append('<div><img src="'+res.url+'" width="100%"/></div>');
+		}
+	}else{
+		$('.content').append('<div><span style="color:#ccc">文件上传失败</span></div>');
+	}
+}).fail(function(res) {
+console.log(res);
+});
+});
+
     });
 		function compile(code,key) {
 			var c=code.charCodeAt(0)+key;

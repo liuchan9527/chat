@@ -21,7 +21,7 @@ if($redis -> ttl($records) == -1){
 $tmpKey = 'MSG:'.date('Ymd').':'.$roomId.':'.$to;
 $redis -> rPush($tmpKey,json_encode($ret));
 if($redis -> ttl($tmpKey) == -1){
-    $redis -> expire($records,86400);
+    $redis -> expire($tmpKey,86400);
 }
 
 $redis -> rpush($records,json_encode($ret));
