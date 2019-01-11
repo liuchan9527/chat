@@ -64,11 +64,29 @@
                             for(var i in data.msg){
                                 obj = data.msg[i];
                                 if(obj.from == from){
-                                    msgHtml += '<div class="from"><span class="blue">'+data.msg[i].from+':</span>'
+if(obj.file == 1){
+	 msgHtml += '<div class="from"><span class="blue">'+obj.from+':</span>'+obj.msg+'</div>'
+}
+
+if(obj.file == 1 && (obj.msg.indexOf('.jpg') != -1 || obj.msg.indexOf('.gif') != -1 || obj.msg.indexOf('.png') != -1 || obj.msg.indexOf('.jpeg') != -1 )){
+	msgHtml += '<div class="from"><span class="blue">'+data.msg[i].from+':</span>'
+                                        + '<img src="'+obj.msg + '"  style="max-width:50%"/></div>';
+}else{
+msgHtml += '<div class="from"><span class="blue">'+data.msg[i].from+':</span>'
                                         + uncompile(data.msg[i].msg,obj.key) + '</div>';
+}
                                 }else{
-                                    msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
+if(obj.file == 1){
+        msgHtml += '<div class="to"><span class="red">'+obj.from+':</span>'+obj.msg+'</div>';
+}
+
+if(obj.file == 1 && (obj.msg.indexOf('.jpg') != -1 || obj.msg.indexOf('.gif') != -1 || obj.msg.indexOf('.png') != -1 || obj.msg.indexOf('.jpeg') != -1 )){
+        msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
+                                        + '<img src="'+obj.msg + '"  style="max-width:50%"/></div>';
+}else{
+	msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
                                         + uncompile(data.msg[i].msg,obj.key) + '</div>';
+}
                                 }
                             }
                             $('.content').append(msgHtml);
@@ -99,8 +117,18 @@
                         if(data.msg.length != 0){
                             var msgHtml = '';
                             for(var i in data.msg){
-                                msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
-                                    + uncompile(data.msg[i].msg,data.msg[i].key) + '</div>';
+var obj = data[i];
+if(obj.file == 1){
+	msgHtml += '<div class="to"><span class="red">'+obj.from+':</span>'+obj.msg+'</div>'
+}
+if(obj.file == 1 && (obj.msg.indexOf('.jpg') != -1 || obj.msg.indexOf('.gif') != -1 || obj.msg.indexOf('.png') != -1 || obj.msg.indexOf('.jpeg') != -1 )){
+        msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
+                                        + '<img src="'+obj.msg + '"  style="max-width:50%"/></div>';
+}else{
+msgHtml += '<div class="to"><span class="red">'+data.msg[i].from+':</span>'
+                                        + uncompile(data.msg[i].msg,obj.key) + '</div>';
+}
+
                             }
                             $('.content').append(msgHtml);
                         }
@@ -142,6 +170,10 @@
 	$('.uploadbtn').click(function(){
 var formData = new FormData();
 formData.append('file', $('#file')[0].files[0]);
+formData.append('roomId', $('input[name=roomid]').val());
+formData.append('to', $('input[name=to]').val());
+formData.append('from', $('input[name=from]').val());
+formData.append('key', parseInt(Math.random()* 10000));
 $.ajax({
     url: './upload.php',
     type: 'POST',
@@ -153,9 +185,16 @@ $.ajax({
 }).done(function(res) {
 	if(res.status==1){
 		$('.content').append('<div><span style="color:#0f0">文件上传成功</span></div>');
-		if(res.pic == 1){
-			$('.content').append('<div><img src="'+res.url+'" width="100%"/></div>');
-		}
+var obj = res;
+var msgHtml = '';
+if(obj.file == 1 && (obj.msg.indexOf('.jpg') != -1 || obj.msg.indexOf('.gif') != -1 || obj.msg.indexOf('.png') != -1 || obj.msg.indexOf('.jpeg') != -1 )){
+        msgHtml += '<div class="from"><span class="blue">'+obj.from+':</span>'
+                                        + '<img src="'+obj.msg + '" style="max-width:50%"/></div>';
+}else{
+msgHtml += '<div class="from"><span class="blue">'+obj.from+':</span>'
+                                        + obj.msg + '</div>';
+}
+$('.content').append(msgHtml);
 	}else{
 		$('.content').append('<div><span style="color:#ccc">文件上传失败</span></div>');
 	}
